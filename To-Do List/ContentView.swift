@@ -10,29 +10,12 @@ import SwiftUI
 struct ContentView: View {
     @StateObject private var viewModel = TaskViewModel()
     @State private var newTaskTitle = ""
+    // controlling whether the addtask sheet is visible
+    @State private var showingAddTask = false
 
     var body: some View {
         NavigationView {
             VStack {
-                HStack {
-                    TextField("Enter new task", text: $newTaskTitle)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                                
-                    Button(action: {
-                        // Prevent adding blank tasks
-                        let trimmed = newTaskTitle.trimmingCharacters(in: .whitespaces)
-                        guard !trimmed.isEmpty else { return }
-                                        
-                        viewModel.addTask(title: trimmed)
-                        newTaskTitle = "" // Clear input
-                    }) {
-                            Image(systemName: "plus")
-                                .padding(8)
-                                .background(Color.blue)
-                                .foregroundColor(.white)
-                                .clipShape(Circle())
-                        }
-                }
                 List {
                     ForEach(viewModel.tasks) { task in
                         HStack {
@@ -62,6 +45,26 @@ struct ContentView: View {
                 }
             }
             .navigationTitle("To-Do List")
+            .toolbar {
+                ToolbarItem {
+                    Button(action: {
+                        // make add task view appear
+                        showingAddTask = true
+                    }) {
+                            Image(systemName: "plus")
+                                .padding(8)
+                                .background(Color.blue)
+                                .foregroundColor(.white)
+                                .clipShape(Circle())
+                        }
+                }
+            }
+        }
+        // creates the popup
+        .sheet(isPresented: $showingAddTask) {
+            AddTaskView { title in
+                viewModel.addTask(title: title)
+            }
         }
     }
 }
