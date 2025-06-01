@@ -19,11 +19,18 @@ struct ContentView: View {
                 List {
                     ForEach(viewModel.tasks) { task in
                         HStack {
-                            VStack {
+                            // add tag color
+                            Rectangle()
+                                    .fill(task.color)
+                                    .frame(width: 10, height: 30)
+                                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                            
+                            VStack(alignment: .leading) {
                                 Text(task.title)
+                                    
                                     .strikethrough(task.isCompleted) // visually cross out if completed
                                 if let t = task.time {
-                                    Text("\(t) min")
+                                    Text(formatTime(t))
                                         .font(.subheadline)
                                         .foregroundColor(.secondary)
                                 }
@@ -54,27 +61,42 @@ struct ContentView: View {
             }
             .navigationTitle("To-Do List")
             .toolbar {
-                ToolbarItem {
+                ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: {
-                        // make add task view appear
                         showingAddTask = true
                     }) {
-                            Image(systemName: "plus")
-                                .padding(8)
-                                .background(Color.blue)
-                                .foregroundColor(.white)
-                                .clipShape(Circle())
-                        }
+                        Image(systemName: "plus")
+                            .padding(8)
+                            .background(Color.blue)
+                            .foregroundColor(.white)
+                            .clipShape(Circle())
+                    }
                 }
             }
+            
         }
         // creates the popup
         .sheet(isPresented: $showingAddTask) {
-            AddTaskView { title, time in
-                viewModel.addTask(title: title, time: time)
+            AddTaskView { title, time, color in
+                viewModel.addTask(title: title, time: time, color: color)
             }
         }
     }
+}
+
+func formatTime(_ time: Int) -> String {
+    let hours = time / 60
+    let mins = time % 60
+    var parts: [String] = []
+    if hours > 0 {
+        let str = "\(hours) \(hours == 1 ? "hr" : "hrs")"
+        parts.append(str)
+    }
+    if mins > 0 {
+        let str = "\(mins) mins"
+        parts.append(str)
+    }
+    return parts.joined(separator: " ")
 }
 
 #Preview {
