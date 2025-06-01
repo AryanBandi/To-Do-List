@@ -11,11 +11,10 @@ import SwiftUI
 class TaskViewModel: ObservableObject {
     @Published var tasks: [Task] = []
 
-    func addTask(title: String, color: Color = .blue) {
-        let task = Task(title: title, isCompleted: false, color: color)
+    func addTask(title: String, time: Int?, color: Color = .blue) {
+        let task = Task(title: title, time: time, isCompleted: false, color: color)
         tasks.append(task)
     }
-
     // underscore means that the label isn't required in function call
     func toggleTask(_ task: Task) {
         // wrapped in if statement to avoid null assignment + call

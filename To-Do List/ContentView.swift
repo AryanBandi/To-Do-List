@@ -19,8 +19,16 @@ struct ContentView: View {
                 List {
                     ForEach(viewModel.tasks) { task in
                         HStack {
-                            Text(task.title)
-                                .strikethrough(task.isCompleted) // visually cross out if completed
+                            VStack {
+                                Text(task.title)
+                                    .strikethrough(task.isCompleted) // visually cross out if completed
+                                if let t = task.time {
+                                    Text("\(t) min")
+                                        .font(.subheadline)
+                                        .foregroundColor(.secondary)
+                                }
+                            }
+                            
                             Spacer()
                             Button(action: {
                                 viewModel.toggleTask(task)
@@ -62,8 +70,8 @@ struct ContentView: View {
         }
         // creates the popup
         .sheet(isPresented: $showingAddTask) {
-            AddTaskView { title in
-                viewModel.addTask(title: title)
+            AddTaskView { title, time in
+                viewModel.addTask(title: title, time: time)
             }
         }
     }
